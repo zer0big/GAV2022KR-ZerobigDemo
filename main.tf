@@ -102,12 +102,6 @@ resource "azurerm_network_security_group" "nsg" {
   }
 }
 
-# Associate the NSG with the VM Subnet
-resource "azurerm_subnet_network_security_group_association" "nsg-asc" {
-  subnet_id                 = azurerm_subnet.subnet.id
-  network_security_group_id = azurerm_network_security_group.nsg.id
-}
-
 # Create a Network Interface Card
 resource "azurerm_network_interface" "nic" {
   depends_on          = [azurerm_resource_group.rg]
@@ -130,6 +124,7 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
+# Associate the NSG with the VM Subnet
 resource "azurerm_subnet_network_security_group_association" "nsg-asc" {
   subnet_id                 = azurerm_subnet.subnet.id
   network_security_group_id = azurerm_network_security_group.nsg.id
@@ -187,7 +182,7 @@ resource "azurerm_linux_virtual_machine" "linux-vm" {
     Creator     = "Azure Compliance"
     Role        = "Azure Compliance"
   }
-  
+
   computer_name                   = var.hostname
   admin_username                  = var.admin_username
   admin_password                  = data.azurerm_key_vault_secret.kv_secret.value
