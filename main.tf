@@ -19,6 +19,12 @@ provider "azurerm" {
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
+  tags = {
+    Environment = "dev"
+    Application = "Azure Compliance"
+    Creator     = "Azure Compliance"
+    Role        = "Azure Compliance"
+  }
 }
 
 # Create a VNET
@@ -27,6 +33,12 @@ resource "azurerm_virtual_network" "vnet" {
   address_space       = ["10.0.0.0/16"]
   resource_group_name = azurerm_resource_group.rg.name
   location            = var.location
+  tags = {
+    Environment = "dev"
+    Application = "Azure Compliance"
+    Creator     = "Azure Compliance"
+    Role        = "Azure Compliance"
+  }
 }
 
 # Create a Subnet for VM
@@ -44,6 +56,12 @@ resource "azurerm_public_ip" "pub_ip" {
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
+  tags = {
+    Environment = "dev"
+    Application = "Azure Compliance"
+    Creator     = "Azure Compliance"
+    Role        = "Azure Compliance"
+  }
 }
 
 # Create an NSG
@@ -75,6 +93,13 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+
+  tags = {
+    Environment = "dev"
+    Application = "Azure Compliance"
+    Creator     = "Azure Compliance"
+    Role        = "Azure Compliance"
+  }
 }
 
 # Associate the NSG with the VM Subnet
@@ -96,6 +121,18 @@ resource "azurerm_network_interface" "nic" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.pub_ip.id
   }
+
+  tags = {
+    Environment = "dev"
+    Application = "Azure Compliance"
+    Creator     = "Azure Compliance"
+    Role        = "Azure Compliance"
+  }
+}
+
+resource "azurerm_subnet_network_security_group_association" "nsg-asc" {
+  subnet_id                 = azurerm_subnet.subnet.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
 data "azurerm_client_config" "current" {}
@@ -144,6 +181,13 @@ resource "azurerm_linux_virtual_machine" "linux-vm" {
     storage_account_type = "Standard_LRS"
   }
 
+  tags = {
+    Environment = "dev"
+    Application = "Azure Compliance"
+    Creator     = "Azure Compliance"
+    Role        = "Azure Compliance"
+  }
+  
   computer_name                   = var.hostname
   admin_username                  = var.admin_username
   admin_password                  = data.azurerm_key_vault_secret.kv_secret.value
