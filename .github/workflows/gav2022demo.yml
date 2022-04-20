@@ -23,39 +23,49 @@ env:
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: 'terraform'
     runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
+ 
+    steps:    - name: Checkout
+      uses: actions/checkout@v2     
+       
     - name: Setup terraform
       uses: hashicorp/setup-terraform@v1
-
+ 
     - name: Terraform Format
       id: fmt
       run: terraform fmt
       working-directory: ${{ env.ROOT_PATH }}
-        
+         
     - name: Terraform Init
       id: init
       run: terraform init
       working-directory: ${{ env.ROOT_PATH }}
-      
+       
     - name: Terraform Validate
       id: validate
       run: terraform validate -no-color
       working-directory: ${{ env.ROOT_PATH }}
-      
+       
     - name: Terraform Plan
-      id: plan    
-      run: terraform plan   
+      id: plan   
+      run: terraform plan -out main.tfplan  
       working-directory: ${{ env.ROOT_PATH }}
-      
+ 
+    - name: Terraform Show
+      id: show   
+      run: terraform show -json main.tfplan > main.tfplan.json  
+ 
+    - name: terraform-compliance
+      id: compliance
+      uses: docker://eerkunt/terraform-compliance
+      with:
+        args: -f compliance-testing/src/features -p main.tfplan.json
+       
   terraform_apply:
     name: 'terraform apply'
     needs: [terraform]
+    environment: DEV
     runs-on: ubuntu-latest
     
     defaults:
@@ -75,3 +85,8 @@ jobs:
       run: terraform apply -auto-approve
       id: apply
       working-directory: ${{ env.ROOT_PATH }}
+
+    # - name: terraform destroy
+    #   run: terraform destroy -auto-approve
+    #   if: ${{inputs.tf_destroy}} == true
+    #   working-directory: ${{ env.ROOT_PATH }}
