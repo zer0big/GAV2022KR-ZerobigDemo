@@ -10,7 +10,7 @@ az group create --name $RESOURCE_GROUP --location $LOCATION
 az keyvault create --name $KEY_VAULT_NAME --resource-group "$RESOURCE_GROUP" --location $LOCATION
 
 # Add a secret to Key Vault
-az keyvault secret set --vault-name $KEY_VAULT_NAME --name pw4gavdemo --value P@ssW0rd4vm
+az keyvault secret set --vault-name $KEY_VAULT_NAME --name pw4gavdemo --value xxxxxxxxx
 
 # Retrieve a secret from Key Vault
 az keyvault secret show --name pw4gavdemo --vault-name $KEY_VAULT_NAME --query "value"
